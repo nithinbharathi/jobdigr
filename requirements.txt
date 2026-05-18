@@ -1,0 +1,8 @@
+litellm
+fastapi
+uvicorn
+google-search-results
+python-multipart
+pydantic
+pydantic-settings
+python-dotenv
