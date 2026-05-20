@@ -87,7 +87,7 @@ export default function App() {
 
       <input
         className="field"
-        placeholder="Job description"
+        placeholder="Job Requirements"
         value={jobDescription}
         onChange={(e) => setJobDescription(e.target.value)}
       />

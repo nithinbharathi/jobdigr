@@ -25,7 +25,7 @@ console.log("sessionStorage:", sessionStorage.getItem("results"));
 
       {data.missing_keywords?.length > 0 && (
         <div className="section">
-          <div className="sectionTitle">Missing Keywords</div>
+          <div className="sectionTitle">Missing keywords in your resume</div>
           <div className="keywords">
             {data.missing_keywords.map((k: string) => (
               <span key={k} className="keyword">{k}</span>
