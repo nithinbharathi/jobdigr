@@ -33,7 +33,7 @@ class AnalysisResult(BaseModel):
     missing_keywords: List[str]
 
 
-@app.get("/")
+@app.get("/health")
 async def root():
     """Health check endpoint"""
     return {"status": "JobDigr API is running"}
