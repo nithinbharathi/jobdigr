@@ -1,21 +1,22 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function App() {
+  const navigate = useNavigate();
   const [companyName, setCompanyName] = useState("");
   const [jobDescription, setJobDescription] = useState("");
   const [resume, setResume] = useState<File | null>(null);
 
-  const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{
     company_name?: string;
     job_description?: string;
     resume?: string;
+    general?: string;
   }>({});
 
   const analyze = async () => {
     setLoading(true);
-    setData(null);
     setErrors({});
     const formData = new FormData();
     formData.append("company_name", companyName);
@@ -58,20 +59,21 @@ export default function App() {
         setErrors(newErrors);
         return;
       }
-      setData(json);
+      sessionStorage.setItem("results", JSON.stringify(json));
+      navigate("/results", { state: json });
+
     } catch (err) {
-      setData({ error: "Request failed" });
+      setErrors({ general: "Could not connect to server. Is the backend running?" });
     } finally {
       setLoading(false);
     }
-
-
   };
 
   return (
     <div style={{ padding: 20 }}>
+      <h1 className="title">Jobdigr</h1>
       <input
-        style={{ display: "block", marginBottom: 10 }}
+        className="field"
         placeholder="Company name"
         value={companyName}
         onChange={(e) => setCompanyName(e.target.value)}
@@ -84,7 +86,7 @@ export default function App() {
       )}
 
       <input
-        style={{ display: "block", marginBottom: 10 }}
+        className="field"
         placeholder="Job description"
         value={jobDescription}
         onChange={(e) => setJobDescription(e.target.value)}
@@ -97,7 +99,7 @@ export default function App() {
       )}
 
       <input
-        style={{ display: "block", marginBottom: 10 }}
+        className="field"
         type="file"
         onChange={(e) => setResume(e.target.files?.[0] || null)}
       />
@@ -108,50 +110,20 @@ export default function App() {
         </div>
       )}
 
-      <button style={{ marginBottom: 20 }} onClick={analyze} disabled={loading}>
+      <button className="button" onClick={analyze} disabled={loading}>
         Analyze
       </button>
+
+      {errors.general && (
+        <div style={{ color: "red", marginTop: 10 }}>
+          {errors.general}
+        </div>
+      )}
 
       {loading && (
         <div style={{ marginBottom: 20 }}>
           Processing... please wait
         </div>
-      )}
-
-      {data && (
-        <div>
-          <h3 style={{ marginBottom: 6 }}>{data.company_name}</h3>
-
-          <p style={{ marginBottom: 16 }}>{data.company_info}</p>
-
-          <h4 style={{ marginBottom: 10 }}>LinkedIn Profiles</h4>
-
-          {data.linkedin_profiles?.map((p: any) => (
-            <div key={p.url} style={{ marginBottom: 14 }}>
-              <div>{p.title}</div>
-
-              <div>
-                LinkedIn Profile:{" "}
-                <a href={p.url} target="_blank" rel="noreferrer">
-                  {p.url}
-                </a>
-              </div>
-            </div>
-          ))}
-          {data.missing_keywords?.length > 0 && (
-            <>
-              <h4 style={{ marginTop: 20, marginBottom: 10 }}>
-                Missing keywords in your resume:
-              </h4>
-
-              <div>
-                {data.missing_keywords.join(", ")}
-              </div>
-            </>
-          )}
-
-        </div>
-
       )}
     </div>
   );
